@@ -12,15 +12,15 @@ permissions:
   contents: read
   packages: write
 
-
 env:
   REGISTRY: ghcr.io
+  ORG: ghcr.io/illuminatorcologne
   IMAGE_NAME: ${{ github.repository }}
-
+  BASE_IMAGE: php-fpm-alpine-base
 
 jobs:
   Base:
-    name: Docker Image - BASE - ${{ matrix.version }}
+    name: Docker Image - ${{ env.BASE_IMAGE }} - ${{ matrix.version }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,6 +29,7 @@ jobs:
         version: ['8.3','8.4']
 
     steps:
+    
       # —— Setup Environment actions  ——————————————————————————————————————————————
 
       - name: Checkout
@@ -45,20 +46,22 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # —— Build base image  ——————————————————————————————————————————————
+
       - name: Build and push - PHP Image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          target: php-fpm-alpine-base
+          target: ${{ env.BASE_IMAGE }}
           build-args: |
             PHP_BUILD_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/illuminatorcologne/php-fpm-alpine-base:${{ matrix.version }}
+            ${{ env.ORG }}/${{ env.BASE_IMAGE }}:${{ matrix.version }}
 
   Build:
+
     name: Docker Image - ${{ matrix.name }} - ${{ matrix.version }}
     runs-on: ubuntu-latest
     needs: Base
@@ -70,6 +73,7 @@ jobs:
         version: ['8.3','8.4']
 
     steps:
+
       # —— Setup Environment actions  ——————————————————————————————————————————————
 
       - name: Checkout
@@ -86,6 +90,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # —— Build release image  ——————————————————————————————————————————————
+
       - name: Build and push - PHP Image
         uses: docker/build-push-action@v6
         with:
@@ -97,4 +102,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/illuminatorcologne/${{ matrix.name }}:${{ matrix.version }}
+            ${{ env.ORG }}/${{ matrix.name }}:${{ matrix.version }}
