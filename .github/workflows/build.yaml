@@ -56,7 +56,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}
+            ${{ env.REGISTRY }}/illuminatorcologne/php-fpm-alpine-base:${{ matrix.version }}
 
   Build:
     name: Docker Image - ${{ matrix.name }} - ${{ matrix.version }}
