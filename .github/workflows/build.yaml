@@ -97,4 +97,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/IlluminatorCologne/${{ matrix.name }}:${{ matrix.version }}
+            ${{ env.REGISTRY }}/illuminatorcologne/${{ matrix.name }}:${{ matrix.version }}
