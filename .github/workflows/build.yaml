@@ -20,7 +20,7 @@ env:
 
 jobs:
   Base:
-    name: Docker Image - ${{ env.BASE_IMAGE }} - ${{ matrix.version }}
+    name: Docker Image - base - ${{ matrix.version }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -61,7 +61,6 @@ jobs:
             ${{ env.ORG }}/${{ env.BASE_IMAGE }}:${{ matrix.version }}
 
   Build:
-
     name: Docker Image - ${{ matrix.name }} - ${{ matrix.version }}
     runs-on: ubuntu-latest
     needs: Base
