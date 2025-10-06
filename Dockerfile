@@ -64,7 +64,10 @@ CMD ["php-fpm"]
 #
 FROM php-fpm-alpine-base as php-fpm-alpine-api-pgsql
 RUN install-php-extensions pdo_pgsql
-
+RUN set -eux; \
+	apk add --no-cache  \
+        yarn \
+	;
 
 ## ## ## image php-fpm-alpine-gui
 #
