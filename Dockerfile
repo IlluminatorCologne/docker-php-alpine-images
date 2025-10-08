@@ -10,7 +10,7 @@ FROM php:${PHP_BUILD_VERSION}-fpm-alpine AS php-fpm-alpine-base
 
 ARG PHP_BUILD_VERSION
 # persistent / runtime deps
-RUN apk add --no-cache \
+RUN apk add --update --no-cache \
         acl \
 		ca-certificates \
         curl \
@@ -18,6 +18,8 @@ RUN apk add --no-cache \
 		file \
 		gettext \
 		git \
+        nodejs \
+        npm \
     && rm -rf /var/cache/apk/* \
     && update-ca-certificates
 
