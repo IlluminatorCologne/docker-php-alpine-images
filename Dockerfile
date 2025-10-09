@@ -32,7 +32,9 @@ RUN install-php-extensions intl apcu opcache zip
 
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
+# set recommended PHP.ini settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# adjustments
 COPY php/conf.d/php.ini $PHP_INI_DIR/conf.d/php.ini
 
 COPY php/php-fpm.d/${PHP_BUILD_VERSION}/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
@@ -63,9 +65,18 @@ CMD ["php-fpm"]
 
 
 ## ## ## image php-fpm-alpine-api-pgsql
-#
+# 
 FROM php-fpm-alpine-base as php-fpm-alpine-api-pgsql
 RUN install-php-extensions pdo_pgsql
+RUN set -eux; \
+	apk add --no-cache  \
+        yarn \
+	;
+
+## ## ## image php-fpm-alpine-api-mysql
+#
+FROM php-fpm-alpine-base as php-fpm-alpine-api-mysql
+RUN install-php-extensions pdo_mysql
 RUN set -eux; \
 	apk add --no-cache  \
         yarn \

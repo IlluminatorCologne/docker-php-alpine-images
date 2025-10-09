@@ -1,4 +1,3 @@
-
 #!/bin/sh
 set -e
 
@@ -11,7 +10,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
   if [ "$APP_ENV" != 'prod' ]; then
     #ln -sf "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
     #ln -sf "$PHP_INI_DIR/conf.d/php.ini-development" "$PHP_INI_DIR/conf.d/php.ini"
-    echp "Running nonprod"
+    echo "Running nonprod"
   fi
 
   mkdir -p var/cache var/log
@@ -21,8 +20,8 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
   . /usr/local/bin/docker-common.sh
   optional_dep_install
 
-  if grep -q DATABASE_URL= .env; then
-  
+  if grep -q ^DATABASE_URL= .env; then
+
     echo "Waiting for database to be ready..."
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
     until [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ] || DATABASE_ERROR=$(php bin/console dbal:run-sql -q "SELECT 1" 2>&1); do
@@ -33,7 +32,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
       fi
       sleep 1
       ATTEMPTS_LEFT_TO_REACH_DATABASE=$((ATTEMPTS_LEFT_TO_REACH_DATABASE - 1))
-      echo "Still waiting for database to be ready... Or maybe the database is not reachable. $ATTEMPTS_LEFT_TO_REACH_DATABASE attempts left."
+      echo "Still waiting for database to be ready... Or maybe the database is not reachable. $ATTEMPTS_LEFT_TO_REACH_DATABASE attempts left"
     done
 
     if [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]; then
@@ -48,6 +47,9 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
       php bin/console doctrine:migrations:migrate --no-interaction
     fi
   fi
+
+  setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
+  setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
 fi
 
 exec docker-php-entrypoint "$@"
