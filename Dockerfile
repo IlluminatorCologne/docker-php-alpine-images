@@ -66,7 +66,7 @@ CMD ["php-fpm"]
 
 ## ## ## image php-fpm-alpine-api-pgsql
 # 
-FROM php-fpm-alpine-base as php-fpm-alpine-api-pgsql
+FROM php-fpm-alpine-base AS php-fpm-alpine-api-pgsql
 RUN install-php-extensions pdo_pgsql
 RUN set -eux; \
 	apk add --no-cache  \
@@ -75,7 +75,7 @@ RUN set -eux; \
 
 ## ## ## image php-fpm-alpine-api-mysql
 #
-FROM php-fpm-alpine-base as php-fpm-alpine-api-mysql
+FROM php-fpm-alpine-base AS php-fpm-alpine-api-mysql
 RUN install-php-extensions pdo_mysql
 RUN set -eux; \
 	apk add --no-cache  \
@@ -84,7 +84,7 @@ RUN set -eux; \
 
 ## ## ## image php-fpm-alpine-gui
 #
-FROM php-fpm-alpine-base as php-fpm-alpine-gui
+FROM php-fpm-alpine-base AS php-fpm-alpine-gui
 RUN install-php-extensions redis
 RUN set -eux; \
 	apk add --no-cache  \
