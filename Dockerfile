@@ -48,10 +48,10 @@ RUN install-php-extensions \
 ###< php extensions ###
 
 ###> php composer ###
-ADD --chmod=0755 https://getcomposer.org/download/latest-stable/composer.phar /usr/local/bin/composer && \
-    composer about
+ADD --chmod=0755 https://getcomposer.org/download/latest-stable/composer.phar /usr/local/bin/composer 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
+RUN composer about
 ###< php composer ###
 
 ###> php ini ###
