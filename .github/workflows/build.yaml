@@ -70,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: ['php-fpm-alpine-api-pgsql', 'php-fpm-alpine-gui']
+        name: ['php-fpm-alpine-api-pgsql', 'php-fpm-alpine-api-mysql', 'php-fpm-alpine-gui']
         version: ['8.3','8.4']
 
     steps:
