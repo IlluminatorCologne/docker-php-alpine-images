@@ -6,7 +6,7 @@ optional_dep_install() {
       echo "Packagist.org is not reachable..."
     fi
 
-    composer config github-oauth.github.com ${GITHUB_TOKEN}
+    composer config -g github-oauth.github.com ${GITHUB_TOKEN}
     composer install --prefer-dist --no-progress --no-interaction
   fi
 }

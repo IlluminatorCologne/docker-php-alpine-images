@@ -33,7 +33,6 @@ RUN apk add --update --no-cache \
 RUN pear config-set http_proxy ${http_proxy:-""}
 # source https://github.com/mlocati/docker-php-extension-installer#readme
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-#COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions \
     apcu \
     ctype \
@@ -46,36 +45,34 @@ RUN install-php-extensions \
     simplexml \
     tokenizer \
     zip
-###< php extensions###
+###< php extensions ###
 
-ADD --chmod=0755 https://getcomposer.org/download/latest-stable/composer.phar /usr/local/bin/composer
-#COPY --from=composer/composer:latest /composer /usr/bin/composer
-
-# set recommended PHP.ini settings
-RUN mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
-# adjustments
-COPY php/conf.d/php.ini ${PHP_INI_DIR}/conf.d/php.ini
-
-COPY php/php-fpm.d/${PHP_BUILD_VERSION}/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
-
-VOLUME /var/run/php
-
-# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
+###> php composer ###
+ADD --chmod=0755 https://getcomposer.org/download/latest-stable/composer.phar /usr/local/bin/composer && \
+    composer about
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
+###< php composer ###
+
+###> php ini ###
+RUN mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
+COPY php/conf.d/php.ini ${PHP_INI_DIR}/conf.d/php.ini
+###< php ini ###
+
+####> php fpm ###
+COPY php/php-fpm.d/${PHP_BUILD_VERSION}/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+# needed for php-fpm socket
+VOLUME /var/run/php
+####< php fpm ###
 
 # build for production
 ARG APP_ENV=prod
-
 VOLUME /srv/app/var
 
-COPY --chmod=0755 php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
-
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
-
-# +x is not needed for this, as it will just be sourced from entrypoint scripts
 COPY --chmod=0755 php/docker-common.sh /usr/local/bin/docker-common.sh
 COPY --chmod=0755 php/docker-entrypoint-api.sh /usr/local/bin/docker-entrypoint
+COPY --chmod=0755 php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
 
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
