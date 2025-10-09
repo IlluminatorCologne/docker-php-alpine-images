@@ -4,12 +4,15 @@
 
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 
+# https://docs.docker.com/build/ci/github-actions/secrets/
+
 ARG PHP_BUILD_VERSION=8.3
 
 ##########################################################################
 ##### image php-fpm-alpine-base
 ##########################################################################
 FROM php:${PHP_BUILD_VERSION}-fpm-alpine AS php-fpm-alpine-base
+RUN --mount=type=secret,id=github_token,env=GITHUB_TOKEN
 
 ARG PHP_BUILD_VERSION
 
