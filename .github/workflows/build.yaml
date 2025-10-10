@@ -1,8 +1,8 @@
 name: CI
 
 on:
-  #schedule:
-  #  - cron: '0 0 * * 0' #Once a week at 00:00 on Sunday
+  schedule:
+   - cron: '0 0 * * 0' #Once a week at 00:00 on Sunday
   push:
     branches:
       - 'main'
@@ -13,14 +13,13 @@ permissions:
   packages: write
 
 env:
-  REGISTRY: ghcr.io
   ORG: ghcr.io/illuminatorcologne
   IMAGE_NAME: ${{ github.repository }}
   BASE_IMAGE: php-fpm-alpine-base
 
 jobs:
   Base:
-    name: Docker Image - base - ${{ matrix.version }}
+    name: Image - base - ${{ matrix.version }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -59,13 +58,11 @@ jobs:
             PHP_BUILD_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          secrets: |
-            "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
           tags: |
             ${{ env.ORG }}/${{ env.BASE_IMAGE }}:${{ matrix.version }}
 
   Build:
-    name: Docker Image - ${{ matrix.name }} - ${{ matrix.version }}
+    name: Image - ${{ matrix.name }} - ${{ matrix.version }}
     runs-on: ubuntu-latest
     needs: Base
 
@@ -90,7 +87,7 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -106,7 +103,5 @@ jobs:
             PHP_BUILD_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          secrets: |
-            "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
           tags: |
             ${{ env.ORG }}/${{ matrix.name }}:${{ matrix.version }}
