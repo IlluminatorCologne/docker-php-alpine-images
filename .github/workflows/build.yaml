@@ -59,6 +59,8 @@ jobs:
             PHP_BUILD_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          secrets: |
+            "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
           tags: |
             ${{ env.ORG }}/${{ env.BASE_IMAGE }}:${{ matrix.version }}
 
@@ -105,6 +107,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
-            "github_token=${{ secrets.GITHUB_TOKEN }}"
+            "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
           tags: |
             ${{ env.ORG }}/${{ matrix.name }}:${{ matrix.version }}

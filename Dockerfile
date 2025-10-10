@@ -12,10 +12,11 @@ ARG PHP_BUILD_VERSION=8.3
 ##### image php-fpm-alpine-base
 ##########################################################################
 FROM php:${PHP_BUILD_VERSION}-fpm-alpine AS php-fpm-alpine-base
-RUN --mount=type=secret,id=github_token,env=GITHUB_TOKEN
 
 ARG PHP_BUILD_VERSION
 
+#RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN
+RUN --mount=type=secret,id=GITHUB_TOKEN export GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN)
 RUN cat /etc/os-release
 
 # persistent / runtime deps
@@ -38,15 +39,7 @@ RUN pear config-set http_proxy ${http_proxy:-""}
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN install-php-extensions \
     apcu \
-    ctype \
-    iconv \
     intl \
-    json \
-    opcache \
-    pcre \
-    session \
-    simplexml \
-    tokenizer \
     zip
 ###< php extensions ###
 
