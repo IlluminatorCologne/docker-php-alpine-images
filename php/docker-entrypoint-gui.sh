@@ -8,9 +8,9 @@ fi
 
 if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
   if [ "$APP_ENV" != 'prod' ]; then
-    #ln -sf "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-    #ln -sf "$PHP_INI_DIR/conf.d/php.ini-development" "$PHP_INI_DIR/conf.d/php.ini"
-    echo "Running nonprod"
+    echo "Running nonprod, apply development php.ini"
+    ln -sf "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+    ln -sf "$PHP_INI_DIR/conf.d/php.ini-development" "$PHP_INI_DIR/conf.d/php.ini"
   fi
 
   mkdir -p var/cache var/log
