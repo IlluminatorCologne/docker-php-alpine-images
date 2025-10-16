@@ -16,7 +16,7 @@ FROM php:${PHP_BUILD_VERSION}-fpm-alpine AS php-fpm-alpine-base
 ARG PHP_BUILD_VERSION
 
 #RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN
-RUN --mount=type=secret,id=GITHUB_TOKEN export GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN)
+#RUN --mount=type=secret,id=GITHUB_TOKEN export GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN)
 RUN cat /etc/os-release
 
 # persistent / runtime deps
@@ -82,7 +82,7 @@ RUN install-php-extensions pdo_pgsql
 RUN set -eux; \
 	apk add --no-cache  \
         yarn \
-	;
+	&& rm -rf /var/cache/apk/*
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
 
@@ -95,7 +95,7 @@ RUN install-php-extensions pdo_mysql
 RUN set -eux; \
 	apk add --no-cache  \
         yarn \
-	;
+	&& rm -rf /var/cache/apk/*
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
 
@@ -108,7 +108,7 @@ RUN install-php-extensions redis
 RUN set -eux; \
 	apk add --no-cache  \
         yarn \
-	;
+	&& rm -rf /var/cache/apk/*
 COPY --chmod=0755 php/docker-entrypoint-gui.sh /usr/local/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
